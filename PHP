@@ -1,0 +1,321 @@
+ /* 1 ✅ checkout页面同账单改为订单详情调整 */
+function change_checkout_billing_title($translated_text, $text, $domain) {
+    if ($translated_text == '账单详情') {
+        $translated_text = '订单详情';
+    }
+    return $translated_text;
+}
+add_filter('gettext', 'change_checkout_billing_title', 20, 3);
+add_filter('woocommerce_ship_to_different_address_checked', '__return_false');
+
+
+add_filter('woocommerce_add_message', function($message) {
+    if (strpos($message, 'Customer matched zone') !== false) {
+        return '';
+    }
+    return $message;
+});
+
+
+
+      /* 2 ✅ 购物车添加免运费提示 */
+// 显示“再买 XX 即可免运费”提示
+function custom_free_shipping_notice_after_shipping() {
+    if (!WC()->cart->needs_shipping()) return;
+
+    $base_currency    = get_option('woocommerce_currency');
+    $current_currency = get_woocommerce_currency();
+    $chosen_methods   = WC()->session->get('chosen_shipping_methods', []);
+    $packages         = WC()->shipping()->get_packages();
+
+    $min_amount = 0;
+    foreach ($packages as $package) {
+        $methods = WC_Shipping::instance()->load_shipping_methods($package);
+        foreach ($methods as $method) {
+            if ($method->id === 'free_shipping' && !empty($method->min_amount)) {
+                $min_amount = $method->min_amount;
+                break 2;
+            }
+        }
+    }
+    if (!$min_amount) return;
+
+    $cart_total = WC()->cart->get_cart_contents_total();
+
+    $rate = 1.0;
+    if ($current_currency !== $base_currency) {
+        $rates_option = get_option('woocommerce_multi_currency_exchange_rates', []);
+        $rate = isset($rates_option[$current_currency]) ? floatval($rates_option[$current_currency]) : 1.0;
+    }
+
+    $has_paid_shipping = true;
+    foreach ($chosen_methods as $method_id) {
+        if (strpos($method_id, 'free_shipping') !== false) {
+            $has_paid_shipping = false;
+            break;
+        }
+    }
+
+    if ($cart_total >= $min_amount) {
+        echo '<div class="custom-shipping-notice">🎉 Congratulations! You have qualified for <strong>free shipping</strong>!</div>';
+    } elseif ($has_paid_shipping) {
+        $remain = ($min_amount - $cart_total) * $rate;
+        echo '<div class="custom-shipping-notice">Spend <strong>' . wc_price($remain) . '</strong> more to get <strong>free shipping</strong>!</div>';
+    }
+}
+add_action('woocommerce_after_shipping_rate', 'custom_free_shipping_notice_after_shipping', 10);
+
+// 达到免邮时自动隐藏付费配送
+add_filter('woocommerce_package_rates', 'hide_paid_shipping_when_free_available', 100, 2);
+function hide_paid_shipping_when_free_available($rates) {
+    $free = [];
+    foreach ($rates as $id => $rate) {
+        if (strpos($id, 'free_shipping') !== false) {
+            $free[$id] = $rate;
+            break;
+        }
+    }
+    return $free ?: $rates;
+}
+
+
+
+   /* 3 ✅ 添加一个组合输出：先显示属性，再显示加入购物车 */
+add_action('woocommerce_single_product_summary', 'custom_show_attributes_and_add_to_cart', 25);
+
+function custom_show_attributes_and_add_to_cart() {
+    global $product;
+
+    // 输出产品属性
+    $attributes = $product->get_attributes();
+    if ( ! empty( $attributes ) ) {
+        echo '<div class="custom-product-attributes">';
+        wc_display_product_attributes( $product );
+        echo '</div>';
+    }
+
+    // 显示默认的加入购物车（包含数量+按钮）
+    // 注意：这里不是复制内容，而是调用 WooCommerce 内置模板
+    woocommerce_template_single_add_to_cart();
+}
+
+
+
+
+   /* 4 ✅ 用户登陆自动勾选 记住 */
+// WooCommerce 登录表单默认勾选“记住我”
+add_action( 'wp_footer', 'auto_check_rememberme_wc_login' );
+function auto_check_rememberme_wc_login() {
+    // 只在“我的账户”页面执行
+    if ( is_account_page() && !is_user_logged_in() ) {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var rememberMe = document.querySelector('#rememberme');
+            if (rememberMe) {
+                rememberMe.checked = true;
+            }
+        });
+        </script>
+        <?php
+    }
+}
+
+
+
+   /* 5 ✅ 用户注册时密码验证 */
+// 在 WooCommerce 注册表单中添加“确认密码”字段
+add_action( 'woocommerce_register_form', 'add_confirm_password_field' );
+function add_confirm_password_field() {
+    ?>
+    <p class="form-row form-row-wide">
+        <label for="reg_password2"><?php _e( '确认密码', 'woocommerce' ); ?> <span class="required">*</span></label>
+        <input type="password" class="input-text" name="password2" id="reg_password2" />
+    </p>
+    <p class="form-row form-row-wide">
+        <small>密码至少8位，必须包含至少1个大写字母、小写字母和数字。</small>
+    </p>
+    <?php
+}
+
+// 注册时进行密码强度 + 确认验证
+add_action( 'woocommerce_register_post', 'validate_custom_password_rules', 10, 3 );
+function validate_custom_password_rules( $username, $email, $validation_errors ) {
+    if ( isset($_POST['password']) ) {
+        $password  = $_POST['password'];
+        $password2 = isset($_POST['password2']) ? $_POST['password2'] : '';
+
+        // 检查长度
+        if ( strlen($password) < 8 ) {
+            $validation_errors->add( 'password_short', __( '密码必须至少包含 8 个字符。', 'woocommerce' ) );
+        }
+
+        // 必须包含大写字母
+        if ( !preg_match( '/[A-Z]/', $password ) ) {
+            $validation_errors->add( 'password_no_upper', __( '密码必须包含至少一个大写字母。', 'woocommerce' ) );
+        }
+
+        // 必须包含小写字母
+        if ( !preg_match( '/[a-z]/', $password ) ) {
+            $validation_errors->add( 'password_no_lower', __( '密码必须包含至少一个小写字母。', 'woocommerce' ) );
+        }
+
+        // 必须包含数字
+        if ( !preg_match( '/[0-9]/', $password ) ) {
+            $validation_errors->add( 'password_no_number', __( '密码必须包含至少一个数字。', 'woocommerce' ) );
+        }
+
+        // 检查确认密码一致性
+        if ( empty($password2) ) {
+            $validation_errors->add( 'password2_empty', __( '请输入确认密码。', 'woocommerce' ) );
+        } elseif ( $password !== $password2 ) {
+            $validation_errors->add( 'password_mismatch', __( '两次输入的密码不一致。', 'woocommerce' ) );
+        }
+    }
+
+    return $validation_errors;
+}
+
+
+
+
+   /* 6 ✅ 更改 WooCommerce "无货" 文本为 "已售完" */
+function custom_out_of_stock_text($text) {
+    if ('无货' === $text) {
+        return '已售完'; // 替换成你想显示的文本
+    }
+    return $text;
+}
+add_filter('woocommerce_get_availability_text', 'custom_out_of_stock_text');
+
+
+
+
+ 
+   /* 7 ✅ 拦截运费规则：若购物车含禁止发往中国的产品，则禁用运费 + 记录产品名称 */
+add_filter('woocommerce_package_rates', 'block_shipping_to_china_for_specific_products', 10, 2);
+add_filter('woocommerce_cart_no_shipping_available_html', 'custom_no_shipping_message');
+add_filter('woocommerce_no_shipping_available_html', 'custom_no_shipping_message');
+
+function block_shipping_to_china_for_specific_products($rates, $package) {
+    if ($package['destination']['country'] !== 'CN') {
+        return $rates;
+    }
+
+    $blocked_products = [];
+
+    foreach (WC()->cart->get_cart() as $cart_item) {
+        $product = $cart_item['data'];
+        $shipping_class_id = $product->get_shipping_class_id();
+        $shipping_class = get_term($shipping_class_id, 'product_shipping_class');
+
+        if ($shipping_class && $shipping_class->slug === 'no-ship-to-china') {
+            $blocked_products[] = $product->get_name();
+        }
+    }
+
+    if (!empty($blocked_products)) {
+        WC()->session->set('blocked_china_products', $blocked_products);
+        return [];
+    }
+
+    WC()->session->__unset('blocked_china_products');
+    return $rates;
+}
+
+// 2. 提示消息，带 .china-blocked-notice 类
+function custom_no_shipping_message($default) {
+    $blocked_products = WC()->session->get('blocked_china_products');
+
+    if (!empty($blocked_products)) {
+        $message = '<div class="china-blocked-notice"><strong>⚠️ 以下商品无法配送到中国，请将其从购物车中移除：</strong><ul>';
+        foreach ($blocked_products as $name) {
+            $message .= '<li class="product-name">' . esc_html($name) . '</li>';
+        }
+        $message .= '</ul></div>';
+        return $message;
+    }
+
+    return $default;
+}
+
+// 3. 注入 CSS 样式
+add_action('wp_head', function () {
+    ?>
+    <style>
+        .china-blocked-notice {
+            border-left: 4px solid #cc0000;
+            background-color: #ffe6e6;
+            color: #cc0000;
+            padding: 1em 1.5em;
+            margin: 2em 0 1em; /* 上边距加大一点 */
+            font-weight: bold;
+            font-size: 1.05em;
+            border-radius: 5px;
+        }
+
+        .china-blocked-notice ul {
+            margin-top: 0.5em;
+            padding-left: 1.2em;
+        }
+
+        .china-blocked-notice .product-name {
+            color: #333333; /* 恢复正常颜色 */
+            font-weight: normal;
+        }
+
+        @media screen and (max-width: 768px) {
+            .china-blocked-notice {
+                margin-top: 3em; /* 移动端向下多一些 */
+            }
+        }
+    </style>
+    <?php
+});
+
+
+
+ 
+   /* ✅更改变量产品选择 */
+add_action('wp_footer', function () {
+    if (is_product()) :
+    ?>
+    <style>
+        /* 未选择变体时：红色边框 + 红字 */
+        select.variation-unselected {
+            border: 1px solid #cc0000 !important;
+            color: #cc0000 !important;  
+        }
+
+        /* 选择后：黑色边框 + 黑色字体 */
+        select.variation-selected {
+            border: 1px solid #333 !important;
+            color: #333 !important;
+            font-weight: normal !important;
+        }
+
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selects = document.querySelectorAll('.variations_form select');
+
+            selects.forEach(function (select) {
+                const updateStyle = () => {
+                    if (!select.value) {
+                        select.classList.add('variation-unselected');
+                        select.classList.remove('variation-selected');
+                    } else {
+                        select.classList.remove('variation-unselected');
+                        select.classList.add('variation-selected');
+                    }
+                };
+
+                updateStyle(); // 页面加载时立即判断一次
+                select.addEventListener('change', updateStyle);
+            });
+        });
+    </script>
+    <?php
+    endif;
+});
