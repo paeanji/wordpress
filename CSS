@@ -1,0 +1,419 @@
+
+
+
+
+
+
+
+
+ /* 1 ✅ 添加顶部优惠信息栏 */
+.top-discount-bar {
+    width: 100%;
+    height: 30px; /* 调整高度 */
+    background-color: #000; /* 黑色背景 */
+    color: #fff; /* 文字颜色 */
+    font-size: 14px;
+    text-align: center;
+    line-height: 30px;
+    position: fixed; /* 固定位置 */
+    top: 0;
+    left: 0;
+    z-index: 10000; /* 确保它显示在最上层 */
+}
+
+/* 让页眉跟随优惠信息栏 */
+.ast-primary-header-bar {
+    position: fixed; /* 固定页眉 */
+    width: 100%;
+    top: 30px; /* 让它在优惠信息栏下方 */
+    left: 0;
+    z-index: 9999; /* 确保它显示在优惠信息栏下面 */
+}
+/* 调整页面内容，避免被固定的页眉遮挡 */
+.site-content {
+    padding-top: 90px; /* 适应优惠信息栏 + 页眉的高度 */
+}
+@media (max-width: 768px) {
+    /* 让移动端的页眉不会被优惠栏遮挡 */
+    .top-discount-bar {
+        width: 100%;
+        height: 30px;
+        background-color: #000;
+        color: #fff;
+        font-size: 14px;
+        text-align: center;
+        line-height: 30px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+    }
+
+
+
+    /* 2 ✅ 修正 Astra 主题的移动端菜单位置 */
+.ast-mobile-header-wrap {
+        position: fixed !important;
+        width: 100%;
+        top: 55px; /* 让菜单正确出现在页眉下方 */
+        left: 0;
+        z-index: 9998; /* 确保菜单在页眉之下但在内容之上 */
+    }
+    /* 让菜单项不被遮挡 */
+    .ast-main-header-bar-alignment {
+        margin-top: 30px;
+    }
+    /* 确保主内容不会被头部遮挡 */
+    .site-content {
+        padding-top: 110px; /* 适应新布局 */
+    }
+}
+
+
+
+   /* 3 ✅ 调整再消费多少免配送字体 */
+.custom-shipping-notice {
+    margin: 8px 0;
+    font-size: 15px;
+    color: #006400; /* 主文字颜色 */
+    font-weight: 500;
+    background: none;
+    border: none;
+    padding: 0;
+    display: block;
+}
+
+.custom-shipping-notice strong {
+    color: #d84315; /* 加粗强调部分颜色 */
+    font-weight: 600;
+}
+
+
+   /* 4 ✅ 调整更换地址文字和背景 */
+.woocommerce-cart .shipping-calculator-button {
+    background-color: #ff6600 !important; /* 按钮背景色（可更换） */
+    color: #ffffff !important; /* 文字颜色 */
+    font-size: 16px !important; /* 文字大小 */
+    font-weight: bold !important; /* 文字加粗 */
+    padding: 5px 10px !important; /* 内边距，增大点击范围 */
+    border-radius: 5px !important; /* 圆角 */
+    display: inline-block !important; /* 保证按钮显示 */
+    border: 2px solid #ff6600 !important; /* 添加边框 */
+    transition: all 0.3s ease-in-out !important; /* 交互效果 */
+}
+
+
+ 
+   /* 5 ✅ 更改 WooCommerce 评价星星颜色 */
+.woocommerce .star-rating span:before {
+    color: #FF8C00; /* 金色 */
+}
+
+
+   
+   /* 6 ✅ 只在 WooCommerce 产品价格下方添加一条分隔线 */
+.woocommerce .price,
+.woocommerce-page .price {
+    border-bottom: 1.5px solid #000;   /* 黑色下边框 */
+    padding-bottom: 5px;             /* 分隔线与文字之间间距 */
+    display: inline-block;           /* 保证 padding-bottom 生效 */
+}
+
+
+
+
+   /* 7 ✅ 调整产品属性表格样式 */
+.custom-product-attributes table.shop_attributes th,
+.custom-product-attributes table.shop_attributes td {
+    padding: 7px 15px;
+}
+
+.custom-product-attributes table.shop_attributes th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+    width: 30%;
+}
+
+.woocommerce-product-attributes-item__label,
+.woocommerce-product-attributes-item__value {
+    vertical-align: middle !important;
+}
+.woocommerce-product-attributes-item__value {
+    font-style: normal !important;
+}
+
+
+
+   /* 8 ✅ 产品分类页面排序距离 */
+.woocommerce .woocommerce-ordering select.orderby {
+    width: auto;                  /* 宽度随内容自适应 */
+    padding: 5px 50px 5px 5px;   /* 右边留出空间给下拉箭头 */
+    border: 1px solid #ccc;       /* 灰色边框 */
+    border-radius: 4px;           /* 圆角 */
+   
+}
+
+
+
+    /* 9 ✅ 手机去掉图片购物车图标 */
+   @media (max-width: 768px) {
+  .woocommerce ul.products li.product .astra-shop-thumbnail-wrap .add_to_cart_button {
+    display: none !important;
+  }
+}
+
+
+
+   /* 10 ✅ 美化 加入购物车 按钮 + 调整字体大小 */
+/* 常态按钮 */
+.woocommerce ul.products li.product .button,
+.woocommerce-page ul.products li.product .button {
+  background-color: #ff5722 !important;  /* 活力橙 */
+  color: #fff !important;
+  border-radius: 25px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: uppercase;
+  border: none;
+  transition: all 0.3s ease;
+  display: block;
+  width: fit-content;
+  margin: 12px auto 0;
+  text-align: center;
+}
+
+/* 悬停按钮效果 */
+.woocommerce ul.products li.product .button:hover {
+  background-color: #e64a19 !important;
+  color: #fff !important;
+}
+
+
+
+
+
+   /* 11 ✅ 购物车结算按钮调整 */
+.woocommerce a.checkout-button {
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+    line-height: normal !important;
+    height: auto !important;
+    min-height: 80%; /* 减少 20% 高度 */
+}
+
+
+
+   /* 12 ✅ 产品标题大小更改 */
+/* 仅在产品分类页、商店页，增大产品标题字号 */
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+    font-size: 16px; /* 你想要的大小 */
+    font-weight: 500; /* 可选：加粗一点 */
+}
+
+
+  /* 13 ✅ 更改产品价格样式 */
+.woocommerce ul.products li.product .price {
+    font-size: 16px; /* 你可以改成你想要的大小，比如 16px、20px 等 */
+    font-weight: bold; /* 可选：加粗字体 */
+    color: #333; /* 可选：修改字体颜色 */
+}
+
+/* 原价（划线灰色） */
+.woocommerce del .amount {
+  color: #000 !important;
+  text-decoration: line-through;
+  margin-right: 6px;
+  font-size: 15px;
+}
+
+/* 促销价（强调颜色） */
+.woocommerce ins .amount {
+  color: #e60023 !important; /* 电商红 */
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* 去除产品详情页原价的默认删除线 */
+.woocommerce div.product .price del,
+.woocommerce div.product span.price del {
+  text-decoration: none !important;
+}
+
+   /*  美化产品货币样式 */
+.woocommerce-Price-currencySymbol {
+    font-size: 12px;
+    vertical-align: super;
+    margin-right: 2px;
+}  
+
+
+
+
+   /* 14 ✅ 隐藏paypal广告信息 */
+.single-product form.cart + div {
+    display: none !important;
+}
+
+
+
+  /* 15 ✅ 更改库存量位置 */
+.woocommerce-variation-availability {
+    margin-top: 10px !important; /* 或更多，例如 15px */
+}
+.ast-stock-detail .ast-stock-avail {
+    display: none !important;
+}
+
+
+
+   /* 16 ✅ 产品卡片设置 */
+/* 商品列表容器，使用列布局（column） */
+.woocommerce ul.products {
+    column-count: 2; /* 默认两列 */
+    column-gap: 10px; /* 列之间的距离 */
+    padding: 0;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+/* 自适应调整列数（响应式） */
+@media (min-width: 768px) {
+    .woocommerce ul.products {
+        column-count: 3;
+    }
+}
+
+@media (min-width: 1024px) {
+    .woocommerce ul.products {
+        column-count: 4;
+    }
+}
+
+/* 每个商品卡片 */
+.woocommerce ul.products li.product {
+    display: inline-block; /* 必须是inline-block才能瀑布流 */
+    width: 100%;
+    margin-bottom: 16px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+/* 鼠标悬停高亮 */
+.woocommerce ul.products li.product:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #ccc;
+}
+
+
+
+   /* 17 ✅修改购物车页面价格字体 */
+.woocommerce-cart .cart_totals .price,
+.woocommerce-cart .woocommerce-cart-form .product-subtotal,
+.woocommerce-cart .woocommerce-shipping-methods .shipping,
+.woocommerce-cart .cart-subtotal .amount,
+.woocommerce-cart .cart-subtotal bdi {
+    font-size: 16px;
+ color: #000 !important
+
+}
+/* 税金额样式 */
+.woocommerce td[data-title="税"] .woocommerce-Price-amount.amount,
+.woocommerce td[data-title="税"] .woocommerce-Price-amount.amount bdi
+ {
+    font-size: 16px !important;
+    color: #000 !important;
+}
+/* 合计金额样式 */
+.woocommerce td[data-title="合计"] strong,
+.woocommerce .order-total .woocommerce-Price-amount.amount,
+.woocommerce .order-total .woocommerce-Price-amount.amount bdi,
+.woocommerce .order-total .woocommerce-Price-currencySymbol {
+    font-size:18px !important;
+    color: #000 !important;
+}
+
+
+   /* 18 ✅Checkout 页面：小计 */
+.woocommerce-checkout-review-order-table .cart-subtotal .woocommerce-Price-amount,
+.woocommerce-checkout-review-order-table .cart-subtotal .woocommerce-Price-amount bdi,
+.woocommerce-checkout-review-order-table .cart-subtotal .woocommerce-Price-currencySymbol {
+    font-size: 16px !important;
+    color: #000 !important;
+}
+/* 修改“税”金额的字体大小和颜色 */
+.woocommerce .tax-total .woocommerce-Price-amount.amount,
+.woocommerce .tax-total .woocommerce-Price-amount.amount bdi,
+.woocommerce .tax-total .woocommerce-Price-amount.amount .woocommerce-Price-currencySymbol {
+    font-size: 16px !important;
+    color: #000 !important;
+}
+
+
+
+   /* 19 ✅隐藏产品附加信息中重量行 */
+.woocommerce-page .product .woocommerce-product-attributes-item--weight {
+    display: none !important;
+}
+
+
+
+   /* 20 ✅ 产品短描述中的链接颜色 */
+.woocommerce div.product .woocommerce-product-details__short-description a {
+  color: #d11141 !important;
+  font-weight: 600;
+}
+
+/* 产品详细描述区域链接颜色 */
+.woocommerce-Tabs-panel a {
+  color: #0073aa !important;
+  text-decoration: underline;
+}
+
+
+
+   /* 21 ✅设置100%进度条 */
+.elementor-progress-wrapper .elementor-progress-bar {
+    position: relative;
+    width: 0%; /* 初始宽度 */
+}
+   /* 进度条上的文本样式 */
+.elementor-progress-wrapper .elementor-progress-text {
+    font-size: 18px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 居中 */
+    z-index: 1;
+}
+  /* 进度条% */
+.elementor-progress-wrapper .elementor-progress-percentage {
+    font-size: 14px;
+    position: absolute;
+    right: 10px;
+}
+
+
+
+   /* 22 ✅详情页缩略图透明度 */
+.woocommerce div.product .flex-control-thumbs img {
+  filter: none !important;
+  opacity: 0.9 !important;  /* 80%不透明 */
+  border: 1px solid transparent;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* 当前主图对应的缩略图完全不透明，并加边框阴影 */
+.woocommerce div.product .flex-control-thumbs img.flex-active {
+  opacity: 1 !important;   /* 完全显示 */
+  border-color: rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
+}
+
