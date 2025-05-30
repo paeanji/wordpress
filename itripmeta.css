@@ -1,0 +1,178 @@
+
+/* 0页眉透明隐藏粘性菜单 */
+#masthead {
+  position: fixed; /* 固定在页面顶部 */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: opacity 0.3s ease;
+  z-index: 999;
+  opacity: 1;
+  pointer-events: auto;
+}
+#masthead.hide-header {
+  opacity: 0;
+  pointer-events: none;
+}
+/* 留出与页眉同高的空间 */
+body {
+  padding-top: 60px; 
+}
+@media (max-width: 768px) {
+  /* 抽屉化移动菜单 */
+  .main-header-bar-navigation {
+    position: fixed;
+    box-shadow:
+      -6px 0 12px rgba(0, 0, 0, 0.2),
+      0 6px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 12px 0 0 12px;
+    transform: translateX(70%);
+    transition: transform 0.3s ease;
+    z-index: 9999;
+    overflow-y: auto;
+  }
+
+  .main-header-bar-navigation.open {
+    transform: translateX(0);
+  }
+}
+
+　/* 主体与背景 */
+body, .peepso-wrap {
+    background-color: #f0f9ff !important;
+    color: #1e3a5f !important;
+}
+
+/* === 按钮样式 === */
+.peepso-button, .peepso-button-primary {
+    background-color: #0077b6 !important;
+    color: #ffffff !important;
+}
+.peepso-button:hover, .peepso-button-primary:hover {
+    background-color: #00b4d8 !important;
+}
+
+.fa-camera {
+  color: #000 !important; /* 相机图标 */
+}
+
+/* === 链接样式 === */
+a, .peepso-link {
+    color: #007BFF!important;
+}
+a:hover, .peepso-link:hover {
+    color: #00b4d8 !important;
+}
+
+
+
+   /* 1，强制 PeepSo 照片九宫格 */
+.ps-media-grid-fitwidth {
+    width: calc(33.33% - px);
+    display: inline-block;
+    margin: 4px;
+    vertical-align: top;
+}
+
+.ps-media-grid-fitwidth img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+
+
+
+   /* 2，PeepSo 隐藏 my profile PeepSo*/
+button.pso-postbox__post-to {
+    display: none !important;
+}
+
+
+
+ /*  3，隐藏三条杠按钮  */
+.ps-navbar__toggle {
+    display: none !important;
+  }
+
+
+
+   /* 4，保持 朋友、消息、通知弹框向上展开*/
+@media (max-width: 768px) {
+  .ps-navbar__inner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background-color: #fff;
+    border-top: 1px solid #ddd;     	
+  /* 保持弹框向上展开 */
+  .ps-notif__box,
+  .ps-dropdown__menu--notifications,
+  .ps-dropdown__menu--messages,
+  .ps-dropdown__menu--friends {
+    position: absolute !important;
+    bottom: 60px !important;
+    top: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 90vw !important;
+    max-height: 60vh;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 9998;
+}  
+/* 每个菜单项占据同等空间 */
+.ps-navbar__menu--mobile .ps-navbar__menu-item {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+}
+/* 图标大小统一 */
+.ps-navbar__menu--mobile i {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+		
+  /*　5　防止页面加载时闪现 PeepSo 原图标 */
+.gcis {
+  visibility: hidden;
+}
+/* 设置菜单栏高度，比如70px */
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    height: 60px;    
+/* ,菜单通知文字使用柔和黑色） */
+  .ps-navbar__menu-link,
+  .ps-navbar__menu-link i,
+  .ps-navbar__menu-link span,
+  .ps-navbar__menu-link .ps-avatar-initials {
+    color: #444444 !important; /* 比纯黑 (#000) 淡一点 */
+}				
+	/* 改变菜单图标为蓝色 */		
+		.ps-navbar__menu i {
+  color: #666 !important;
+  transition: color 0.3s;
+}
+.ps-navbar__menu a:hover i,
+.ps-navbar__menu-item--active i {
+  color: #007bff !important;
+}
+
+
+
+
+
+
+
+
+
